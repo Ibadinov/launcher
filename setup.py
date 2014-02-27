@@ -12,7 +12,8 @@ setup(
     author_email='ibadinov@me.com',
 
     platforms='any',
-    install_requires=[],
+    dependency_links=['http://github.com/Ibadinov/ptime/tarball/master#egg=ptime-0.1.3'],
+    install_requires=['ptime'],
     packages=['watchdog'],
     test_suite='tests'
 )

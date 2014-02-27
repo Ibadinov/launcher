@@ -101,7 +101,7 @@ class Watchdog(object):
             if timestamp > time.time():
                 break
             self._launch_process(id)
-            self.pending.del(id)
+            self.pending.pop(id)
 
     def _launch_process(self, id):
         command = self.commands[id]['command']
