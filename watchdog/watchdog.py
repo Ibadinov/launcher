@@ -11,7 +11,10 @@ from .schedule import previous as schedule_previous
 from .schedule import next as schedule_next
 from collections import OrderedDict
 
+import logging
 import signal
+import time
+import os
 
 
 def shell_execv(filename, argv):
@@ -29,10 +32,10 @@ def shell_execv(filename, argv):
 
 
 class Watchdog(object):
-    def __init__(self, load_launch_time, store_launch_time, on_exit):
+    def __init__(self, load_launch_time, store_launch_time, on_exit=None):
         self.load_launch_time = load_launch_time
         self.store_launch_time = store_launch_time
-        self.on_exit = on_exit
+        self.on_exit = on_exit or (lambda id, status, is_normal: None)
         self.commands = {}
         self.processes = {}
         self.pending = OrderedDict()
@@ -45,7 +48,7 @@ class Watchdog(object):
             delay = max(0, min(timeout, first - time.time()))
         else:
             delay = timeout
-        sleep(delay)
+        time.sleep(delay)
         self._launch_pending()
 
     def terminate(self):
@@ -83,17 +86,9 @@ class Watchdog(object):
 
     def _postpone(self, id, command):
         previous = self.load_launch_time(id)
-        schedule = command.get('schedule')
-        interval = command.get('interval')
-        if schedule:
-            timestamp = self._get_launch_time(schedule, previous)
-        elif interval:
-            timestamp = max(previous + interval, time.time())
-        else:
-            timestamp = time.time()
-        self.pending[id] = timestamp
+        self.pending[id] = self._get_launch_time(command, previous)
         self.pending = OrderedDict(sorted(self.pending.items(), key=lambda item: item[1]))
-        logging.info("Will launch %s at %s", id, time.strftime('H:M m d', timestamp))
+        logging.info("Will launch %s at %s", id, time.strftime('H:M m d', time.gmtime(timestamp)))
 
     def _launch_pending(self):
         while self.pending:
@@ -119,7 +114,7 @@ class Watchdog(object):
             # group will be used to terminate child process along with it's children
             os.setsid()
             # exec command in current process scope
-            command = command.split()
+            command = command.split(' ')
             shell_execv(command[0], command[1:])
         # parent process
         return pid
@@ -133,11 +128,17 @@ class Watchdog(object):
         processes = {pid: name for pid, name in self.processes.items() if id == name}
         self._terminate_processes(processes)
 
-    def _get_launch_time(self, schedule, previous):
-        now = time.time()
-        if previous < schedule_previous(schedule, now):
-            return now
-        return schedule_next(schedule, now)
+    def _get_launch_time(self, command, previous):
+        schedule = command.get('schedule')
+        interval = command.get('interval')
+        if schedule:
+            now = time.time()
+            if previous < schedule_previous(schedule, now):
+                return now
+            return schedule_next(schedule, now)
+        if interval:
+            return max(previous + interval, time.time())
+        return time.time()
 
     def _is_normal_exit(self, status):
         if os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0:
