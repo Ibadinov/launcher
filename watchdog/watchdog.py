@@ -32,9 +32,9 @@ def shell_execv(filename, argv):
 
 
 class Watchdog(object):
-    def __init__(self, load_launch_time, store_launch_time, on_exit=None):
-        self.load_launch_time = load_launch_time
-        self.store_launch_time = store_launch_time
+    def __init__(self, load_launch_time=None, store_launch_time=None, on_exit=None):
+        self.load_launch_time = load_launch_time or (lambda id: 0)
+        self.store_launch_time = store_launch_time or (lambda id, timestamp: None)
         self.on_exit = on_exit or (lambda id, status, is_normal: None)
         self.commands = {}
         self.processes = {}
