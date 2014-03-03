@@ -67,7 +67,7 @@ class Watchdog(object):
                 self._terminate_process(id)
         self.commands = dict(commands)
 
-    def _handle_sigchld(self, signo):
+    def _handle_sigchld(self, signo, frame):
         while True:
             pid, status, rusage = os.wait3(os.WNOHANG)
             if not pid:
