@@ -89,7 +89,8 @@ class Watchdog(object):
         timestamp = self._get_launch_time(command, previous)
         self.pending[id] = timestamp
         self.pending = OrderedDict(sorted(self.pending.items(), key=lambda item: item[1]))
-        logging.info("Will launch %s at %s", id, time.strftime('H:M m d', time.gmtime(timestamp)))
+        formatted_time = time.strftime('%H:%M %b %d', time.gmtime(timestamp))
+        logging.info("Will launch %s at %s", id, formatted_time)
 
     def _launch_pending(self):
         while self.pending:
