@@ -55,13 +55,13 @@ class Watchdog(object):
         self._terminate_processes(self.processes)
 
     def set_commands(self, commands):
-        for id, command in commands:
+        for id, command in commands.items():
             if id not in self.commands:
                 self._postpone(id, command)
             elif command != self.commands[id]:
                 self._terminate_process(id)
                 self._postpone(id, command)
-        for id, command in self.commands:
+        for id, command in self.commands.items():
             if id not in commands:
                 self._terminate_process(id)
         self.commands = dict(commands)
@@ -120,7 +120,7 @@ class Watchdog(object):
         return pid
 
     def _terminate_processes(self, processes):
-        for pid, id in processes:
+        for pid, id in processes.items():
             logging.info("Terminating %s[%s]", id, pid)
             os.kill(-pid, signal.SIGTERM)
 
