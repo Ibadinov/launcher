@@ -12,9 +12,10 @@ from .schedule import next as schedule_next
 from collections import OrderedDict
 
 import logging
-import signal
-import time
 import os
+import signal
+import sys
+import time
 
 
 def shell_execv(filename, argv):
@@ -22,13 +23,13 @@ def shell_execv(filename, argv):
         if file.read(2) == '#!':
             args = file.readline().strip().split(' ')
             # change STDIN to that file
-            os.dup2(os.open(filename, os.O_RDONLY), stdin.fileno())
+            os.dup2(os.open(filename, os.O_RDONLY), sys.stdin.fileno())
             trampoline = '/usr/bin/env'
             # argv[0] for trampoline is trampoline's path
             # append filename since we should pass script name to interpreter
-            execv(trampoline, [trampoline] + args + [filename] + argv)
+            os.execv(trampoline, [trampoline] + args + [filename] + argv)
 
-    execv(filename, [filename] + argv[2:])
+    os.execv(filename, [filename] + argv)
 
 
 class Watchdog(object):
@@ -97,8 +98,8 @@ class Watchdog(object):
             id, timestamp = self.pending.items()[0]
             if timestamp > time.time():
                 break
-            self._launch_process(id)
             self.pending.pop(id)
+            self._launch_process(id)
 
     def _launch_process(self, id):
         command = self.commands[id]['command']
