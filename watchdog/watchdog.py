@@ -69,8 +69,9 @@ class Watchdog(object):
 
     def _handle_sigchld(self, signo, frame):
         while True:
-            pid, status, rusage = os.wait3(os.WNOHANG)
-            if not pid:
+            try:
+                pid, status, rusage = os.wait3(os.WNOHANG)  # raises ECHILD when finished
+            except OSError:
                 break
             self._child_exited(pid, status, rusage)
 
