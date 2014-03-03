@@ -150,7 +150,7 @@ class Watchdog(object):
             return True
         return False
 
-    def _log_exit(self, pid, status):
+    def _log_exit(self, id, pid, status):
         if os.WIFEXITED(status):
             logging.info("Child %s[%d] exited with status %d", id, pid, os.WEXITSTATUS(status))
         elif os.WIFSIGNALED(status):
