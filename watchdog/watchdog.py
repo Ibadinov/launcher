@@ -86,7 +86,8 @@ class Watchdog(object):
 
     def _postpone(self, id, command):
         previous = self.load_launch_time(id)
-        self.pending[id] = self._get_launch_time(command, previous)
+        timestamp = self._get_launch_time(command, previous)
+        self.pending[id] = timestamp
         self.pending = OrderedDict(sorted(self.pending.items(), key=lambda item: item[1]))
         logging.info("Will launch %s at %s", id, time.strftime('H:M m d', time.gmtime(timestamp)))
 
