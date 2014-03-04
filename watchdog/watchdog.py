@@ -7,6 +7,7 @@
     :license: MIT, see LICENSE for more details.
 """
 
+from .run_loop import RunLoop
 from .schedule import previous as schedule_previous
 from .schedule import next as schedule_next
 from collections import OrderedDict
@@ -34,16 +35,19 @@ def shell_execv(filename, argv):
 
 class Watchdog(object):
     def __init__(self, load_launch_time=None, store_launch_time=None, on_exit=None):
-        self.load_launch_time = load_launch_time or (lambda id: 0)
-        self.store_launch_time = store_launch_time or (lambda id, timestamp: None)
+        self.store = {}
+        self.load_launch_time = load_launch_time or (lambda id: self.store.get(id) or 0)
+        self.store_launch_time = store_launch_time or (lambda id, ts: self.store.update({id: ts}))
         self.on_exit = on_exit or (lambda id, status, is_normal: None)
         self.commands = {}
         self.processes = {}
         self.pending = OrderedDict()
+        self.run_loop = RunLoop()
         signal.signal(signal.SIGCHLD, self._handle_sigchld)
 
     def run(self, timeout=None):
         timeout = timeout or 60
+        self.run_loop.run()
         if self.pending:
             first = self.pending.items()[0][1]
             delay = max(0, min(timeout, first - time.time()))
@@ -73,7 +77,7 @@ class Watchdog(object):
                 pid, status, rusage = os.wait3(os.WNOHANG)  # raises ECHILD when finished
             except OSError:
                 break
-            self._child_exited(pid, status, rusage)
+            self.run_loop.postpone(lambda: self._child_exited(pid, status, rusage))
 
     def _child_exited(self, pid, status, rusage):
         id = self.processes.pop(pid)
