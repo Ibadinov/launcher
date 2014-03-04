@@ -17,13 +17,13 @@ class RunLoop(object):
     def run(self):
         while True:
             try:
-                self.queue.get()()
+                self.queue.get_nowait()()
             except Empty:
                 break
 
     def run_once(self):
         try:
-            self.queue.get()()
+            self.queue.get_nowait()()
         except Empty:
             pass
 

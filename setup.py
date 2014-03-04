@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='watchdog',
-    version='0.1.9',
+    version='0.1.10',
     url='http://github.com/Ibadinov/watchdog',
     license='MIT',
     author='Marat Ibadinov',
