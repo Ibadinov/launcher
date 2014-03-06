@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    watchdog
+    launcher
     ~~~~~~~~
 
     :copyright: (c) 2014 by Marat Ibadinov.
@@ -33,7 +33,7 @@ def shell_execv(filename, argv):
     os.execv(filename, [filename] + argv)
 
 
-class Watchdog(object):
+class Launcher(object):
     def __init__(self, load_launch_time=None, store_launch_time=None, on_exit=None):
         self.store = {}
         self.load_launch_time = load_launch_time or (lambda id: self.store.get(id) or 0)

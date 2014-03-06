@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    watchdog
+    launcher
     ~~~~~~~~
 
     :copyright: (c) 2014 by Marat Ibadinov.

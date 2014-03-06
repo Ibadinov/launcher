@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
-from watchdog import schedule
+from launcher import schedule
 
 from datetime import datetime
 from pytz import UTC

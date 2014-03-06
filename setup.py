@@ -4,9 +4,9 @@
 from setuptools import setup
 
 setup(
-    name='watchdog',
+    name='launcher',
     version='0.1.10',
-    url='http://github.com/Ibadinov/watchdog',
+    url='http://github.com/Ibadinov/launcher',
     license='MIT',
     author='Marat Ibadinov',
     author_email='ibadinov@me.com',
@@ -14,6 +14,6 @@ setup(
     platforms='any',
     dependency_links=['http://github.com/Ibadinov/ptime/tarball/master#egg=ptime-0.1.3'],
     install_requires=['ptime'],
-    packages=['watchdog'],
+    packages=['launcher'],
     test_suite='tests'
 )
