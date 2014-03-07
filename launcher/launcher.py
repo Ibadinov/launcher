@@ -74,10 +74,14 @@ class Launcher(object):
     def _handle_sigchld(self, signo, frame):
         while True:
             try:
-                pid, status, rusage = os.wait3(os.WNOHANG)  # raises ECHILD when finished
+                # raises OSError with ECHILD code when there is no child processes
+                # returns pid=0 when there is no exited child
+                pid, status, rusage = os.wait3(os.WNOHANG)
+                if not pid:
+                    break
             except OSError:
                 break
-            self.run_loop.postpone(lambda: self._child_exited(pid, status, rusage))
+            self.run_loop.postpone(lambda p=pid, s=status, r=rusage: self._child_exited(p, s, r))
 
     def _child_exited(self, pid, status, rusage):
         id = self.processes.pop(pid)

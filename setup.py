@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='launcher',
-    version='0.1.10',
+    version='0.1.11',
     url='http://github.com/Ibadinov/launcher',
     license='MIT',
     author='Marat Ibadinov',
