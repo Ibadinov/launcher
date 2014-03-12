@@ -88,6 +88,8 @@ class Launcher(object):
         self._log_exit(id, pid, status)
         self.on_exit(id, status, self._is_normal_exit(status))
 
+        if id not in self.commands:
+            return  # command was removed from data source
         command = self.commands[id]
         if not self._is_normal_exit(status) and command.get('respawn'):
             self._postpone(id, command)
