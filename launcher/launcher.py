@@ -12,6 +12,7 @@ from .schedule import previous as schedule_previous
 from .schedule import next as schedule_next
 from collections import OrderedDict
 
+import errno
 import logging
 import os
 import signal
@@ -136,7 +137,11 @@ class Launcher(object):
     def _terminate_processes(self, processes):
         for pid, id in processes.items():
             logging.info("Terminating %s[%s]", id, pid)
-            os.kill(-pid, signal.SIGTERM)
+            try:
+                os.kill(-pid, signal.SIGTERM)
+            except OSError as e:
+                if e.errno != errno.ESRCH:  # process may be dead already
+                    raise
 
     def _terminate_process(self, id):
         processes = {pid: name for pid, name in self.processes.items() if id == name}
