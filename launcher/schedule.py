@@ -11,6 +11,7 @@ import calendar
 import ptime
 
 from datetime import datetime
+from pytz import UTC
 
 
 def ptime_format(schedule):
@@ -41,7 +42,7 @@ def previous(schedule, base=None):
 
 def _parse(prefer_future, schedule, base=None):
     if (base):
-        base = datetime.fromtimestamp(base)
+        base = datetime.fromtimestamp(base, tz=UTC)
     format, value = ptime_format(schedule)
     parser = ptime.Parser(ptime.Format(format), None, prefer_future)
     result = parser.parse(value, base)
