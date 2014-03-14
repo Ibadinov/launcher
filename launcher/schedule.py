@@ -44,5 +44,5 @@ def _parse(prefer_future, schedule, base=None):
         base = datetime.fromtimestamp(base)
     format, value = ptime_format(schedule)
     parser = ptime.Parser(ptime.Format(format), None, prefer_future)
-    datetime = parser.parse(value, base)
-    return calendar.timegm(datetime.utctimetuple())
+    result = parser.parse(value, base)
+    return calendar.timegm(result.utctimetuple())
