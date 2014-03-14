@@ -30,11 +30,13 @@ def ptime_format(schedule):
 
 
 def next(schedule, base=None):
-    return _parse(True, schedule, base)
+    schedules = [schedule] if isinstance(schedule, basestring) else schedule
+    return min([_parse(True, schedule, base) for schedule in schedules])
 
 
 def previous(schedule, base=None):
-    return _parse(False, schedule, base)
+    schedules = [schedule] if isinstance(schedule, basestring) else schedule
+    return max([_parse(False, schedule, base) for schedule in schedules])
 
 
 def _parse(prefer_future, schedule, base=None):

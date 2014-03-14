@@ -37,7 +37,7 @@ class TestSchedule(TestCase):
             year=now.year, month=now.month, day=01, hour=12, minute=0, tzinfo=UTC
         )
         if expectation > now:
-            expectation = expectation.replace(month=expectation.month-1)
+            expectation = expectation.replace(month=expectation.month - 1)
 
         self.assertEquals(result, expectation)
 
@@ -49,6 +49,18 @@ class TestSchedule(TestCase):
             year=now.year, month=now.month, day=01, hour=12, minute=0, tzinfo=UTC
         )
         if expectation < now:
-            expectation = expectation.replace(month=expectation.month+1)
+            expectation = expectation.replace(month=expectation.month + 1)
 
         self.assertEquals(result, expectation)
+
+    def test_fixed(self):
+        schedule.previous('12:00')
+        # todo: verify result
+        schedule.next('12:00')
+        # todo: verify result
+
+    def test_list(self):
+        schedule.previous(['12:00', '13:00'])
+        # todo: verify result
+        schedule.next(['12:00', '13:00'])
+        # todo: verify result
